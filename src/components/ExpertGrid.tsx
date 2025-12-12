@@ -71,28 +71,93 @@ const ExpertGrid = () => {
   const containerRef = useRef(null);
 
   return (
-    <section id="experts" className="py-32 bg-gray-50 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6">
+    <section id="experts" className="py-24 md:py-32 bg-gray-50 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 md:px-6">
         
         {/* Section Header */}
-        <div className="mb-16 md:text-center max-w-3xl mx-auto space-y-4">
+        <div className="mb-12 md:mb-16 text-center md:text-center max-w-3xl mx-auto space-y-4">
           <div className="flex items-center justify-center gap-2 text-xs font-bold text-teal-700 tracking-[0.2em] uppercase">
             <ShieldCheck className="w-4 h-4" />
             <span>Personal Médico Autenticado</span>
           </div>
-          <h3 className="font-display text-4xl md:text-5xl font-bold text-gray-900 tracking-tight">
+          <h3 className="font-display text-3xl md:text-5xl font-bold text-gray-900 tracking-tight">
             Especialistas dedicados.<br/>
             <span className="text-gray-400">Trabajando en paralelo.</span>
           </h3>
-          <p className="text-gray-500 text-xl font-light">
+          <p className="text-gray-500 text-lg md:text-xl font-light">
             Desliza para conocer a tu equipo clínico personal.
           </p>
         </div>
 
-        {/* Flex Wrap Layout */}
-        <div 
-            className="flex flex-wrap justify-center gap-6 pb-12" 
-        >
+        {/* 
+           =========================================
+           MOBILE LAYOUT: Horizontal Carousel (md:hidden)
+           =========================================
+        */}
+        <div className="md:hidden flex overflow-x-auto gap-4 pb-8 -mx-4 px-4 snap-x snap-mandatory scrollbar-hide">
+            {experts.map((expert, idx) => (
+                <div 
+                    key={idx} 
+                    className={`
+                        min-w-[85vw] snap-center
+                        flex flex-col justify-between
+                        rounded-3xl p-6 border transition-all duration-300
+                        bg-white border-gray-100 shadow-sm
+                        ${expert.bg}
+                    `}
+                >
+                    {/* Header Card */}
+                    <div className="flex justify-between items-start mb-6">
+                        <div className="flex gap-4">
+                            <div className="p-3 rounded-2xl border bg-gray-50 border-gray-100">
+                                <expert.icon className={`w-6 h-6 ${expert.accent}`} />
+                            </div>
+                            <div>
+                                <div className="text-[10px] font-mono uppercase tracking-wider mb-1 flex items-center gap-2 text-gray-400">
+                                    {expert.id}
+                                </div>
+                                <h4 className="text-lg font-bold text-gray-900">
+                                    {expert.role}
+                                </h4>
+                            </div>
+                        </div>
+                        {/* Status */}
+                        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-gray-100/10 bg-gray-100/50">
+                            <span className={`relative flex h-2 w-2`}>
+                                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${expert.pulseColor}`}></span>
+                                <span className={`relative inline-flex rounded-full h-2 w-2 ${expert.dotColor}`}></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Description */}
+                    <div>
+                        <p className="text-sm leading-relaxed text-gray-600 font-medium mb-6">
+                            {expert.description}
+                        </p>
+                        <div className="pt-4 border-t border-gray-50 flex justify-between items-center text-[10px] uppercase font-mono tracking-wider text-gray-400">
+                            <div className="flex items-center gap-1">
+                                <Cpu className="w-3 h-3" />
+                                <span>AI Core v2.4</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                                <Fingerprint className="w-3 h-3" />
+                                <span>Verificado</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
+
+
+        {/* 
+           =========================================
+           DESKTOP LAYOUT: Flex Wrap Grid (hidden md:flex)
+           Preserved EXACTLY as original
+           =========================================
+        */}
+        <div className="hidden md:flex flex-wrap justify-center gap-6 pb-12">
           {experts.map((expert, idx) => (
             <motion.div
               key={idx}
@@ -102,7 +167,7 @@ const ExpertGrid = () => {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ delay: idx * 0.1, type: "spring", stiffness: 50, damping: 20 }}
               className={`
-                w-full md:w-[380px]
+                w-[380px]
                 group relative flex flex-col justify-between
                 rounded-3xl p-8 border transition-all duration-300
                 bg-white border-gray-100 hover:shadow-2xl hover:shadow-gray-200/50
@@ -159,6 +224,7 @@ const ExpertGrid = () => {
             </motion.div>
           ))}
         </div>
+
       </div>
     </section>
   );
