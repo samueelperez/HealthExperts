@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useRef } from "react";
-import { Activity, Brain, Heart, ShieldCheck, Scale, Cpu, Fingerprint, Sparkles, Zap, Utensils } from "lucide-react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import React from "react";
+import { Brain, Heart, ShieldCheck, Cpu, Fingerprint, Sparkles, Zap, Utensils } from "lucide-react";
+import { motion } from "framer-motion";
 
 const experts = [
   {
@@ -68,7 +68,42 @@ const experts = [
 ];
 
 const ExpertGrid = () => {
-  const containerRef = useRef(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [isPaused, setIsPaused] = React.useState(false);
+  const [scrollProgress, setScrollProgress] = React.useState(0);
+
+  React.useEffect(() => {
+    const container = containerRef.current;
+    if (!container || isPaused) return;
+
+    const scrollInterval = setInterval(() => {
+        const { scrollLeft, scrollWidth, clientWidth } = container;
+        const cardWidth = clientWidth * 0.85; // Approximate card width (85vw)
+        const gap = 16; // 4 * 4px (gap-4)
+        const scrollAmount = cardWidth + gap;
+
+        // Check if we are near the end
+        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+            // Smoothly wrap back to start
+            container.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+            // Scroll to next
+            container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+    }, 3000); // 3 seconds interval
+
+    return () => clearInterval(scrollInterval);
+  }, [isPaused]);
+
+  // Handle manual scroll to update progress bar
+  const handleScroll = () => {
+    const container = containerRef.current;
+    if (!container) return;
+    const { scrollLeft, scrollWidth, clientWidth } = container;
+    const totalScroll = scrollWidth - clientWidth;
+    const progress = (scrollLeft / totalScroll) * 100;
+    setScrollProgress(progress);
+  };
 
   return (
     <section id="experts" className="py-24 md:py-32 bg-gray-50 overflow-hidden">
@@ -94,7 +129,16 @@ const ExpertGrid = () => {
            MOBILE LAYOUT: Horizontal Carousel (md:hidden)
            =========================================
         */}
-        <div className="md:hidden flex overflow-x-auto gap-4 pb-8 -mx-4 px-4 snap-x snap-mandatory scrollbar-hide">
+        <div 
+            ref={containerRef}
+            onScroll={handleScroll}
+            // Pause on interaction
+            onTouchStart={() => setIsPaused(true)}
+            onTouchEnd={() => setTimeout(() => setIsPaused(false), 5000)} // Resume after 5s
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+            className="md:hidden flex overflow-x-auto gap-4 pb-8 -mx-4 px-4 snap-x snap-mandatory scrollbar-hide scroll-smooth"
+        >
             {experts.map((expert, idx) => (
                 <div 
                     key={idx} 
@@ -148,6 +192,18 @@ const ExpertGrid = () => {
                     </div>
                 </div>
             ))}
+        </div>
+        
+        {/* Custom Progress Bar for Mobile */}
+        <div className="md:hidden flex justify-center pb-12 mt-2">
+            <div className="h-1.5 w-32 bg-gray-200 rounded-full overflow-hidden">
+                <motion.div 
+                    className="h-full bg-teal-500 rounded-full"
+                    animate={{ width: `${scrollProgress}%` }}
+                    transition={{ type: "tween", ease: "easeOut", duration: 0.2 }}
+                    style={{ width: `${Math.max(10, scrollProgress)}%` }} // Min width for visibility
+                />
+            </div>
         </div>
 
 

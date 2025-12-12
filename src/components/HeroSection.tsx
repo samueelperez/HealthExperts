@@ -36,7 +36,7 @@ const HeroSection = () => {
     },
   };
 
-  const navLinks = ["Cómo Funciona", "Expertos", "Ciencia"];
+  const navLinks: string[] = []; // Empty as requested
 
   return (
     <div className="min-h-screen bg-white font-sans selection:bg-teal-100 overflow-hidden">
@@ -55,20 +55,9 @@ const HeroSection = () => {
              <LogoFull className="h-8 md:h-10" />
           </motion.div>
           
-          {/* Desktop Links */}
+          {/* Desktop Links (Removed) */}
           <div className="hidden md:flex gap-8 text-sm font-medium text-gray-600">
-            {navLinks.map((item, i) => (
-                <motion.a 
-                    key={item}
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 + i * 0.1 }}
-                    href={`#${item === "Expertos" ? "experts" : ""}`}
-                    className="hover:text-gray-900 transition"
-                >
-                    {item}
-                </motion.a>
-            ))}
+             {/* Links removed as per request */}
           </div>
 
           <motion.button 
